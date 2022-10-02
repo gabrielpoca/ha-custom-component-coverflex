@@ -67,7 +67,17 @@ class CoverflexAPI:
             ) as res:
                 if res.status == 200 and res.content_type == "application/json":
                     json = await res.json()
-                    return Pocket(json['pockets'][0])
+                    index = 0
+                    pocket = None
+                    while index < len(json['pockets']):
+                        if(json['pockets'][index]['type'] == 'meals'):
+                            pocket = json['pockets'][index]
+                        index += 1
+
+                    if (pocket == None):
+                        pocket = json['pockets'][0]
+
+                    return Pocket(pocket)
                 raise Exception("Could not fetch the card balance from API")
         except aiohttp.ClientError as err:
             _LOGGER.error(err)
